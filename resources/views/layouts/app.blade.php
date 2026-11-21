@@ -15,13 +15,30 @@
 </head>
 <body class="bg-light">
 
-    <nav class="navbar navbar-dark bg-dark mb-4">
+   
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
         <div class="container">
-            <a class="navbar-brand" href="{{ route('horarios.index') }}">
+
+            <a class="navbar-brand"
+            href="{{ route('horarios.index') }}">
                 Sistema de vigilancia
             </a>
+
+            <div class="navbar-nav">
+                <a class="nav-link"
+                href="{{ route('horarios.index') }}">
+                    Horarios
+                </a>
+
+                <a class="nav-link"
+                href="{{ route('simulacion.index') }}">
+                    Simulación
+                </a>
+            </div>
+
         </div>
     </nav>
+
 
     <main class="container mb-5">
         @yield('content')
