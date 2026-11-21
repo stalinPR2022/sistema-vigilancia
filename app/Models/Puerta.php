@@ -19,6 +19,7 @@ class Puerta extends Model
         'activa',
     ];
 
+    //Obtener los horarios permitidos de la puerta
     public function horarios(): HasMany
     {
         return $this->hasMany(
@@ -27,4 +28,15 @@ class Puerta extends Model
             'id_puerta'
         );
     }
+
+    //Obtener los eventos generados por la puerta.
+    public function eventos(): HasMany
+    {
+        return $this->hasMany(
+            Evento::class,
+            'id_puerta',
+            'id_puerta'
+        );
+    }
+
 }

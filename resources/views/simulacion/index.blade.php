@@ -54,10 +54,23 @@
                 <strong>ID de puerta:</strong>
                 {{ $evento['id_puerta'] }}
             </p>
+            <!-- datos del evento: ID -->
+            <p>
+                <strong>ID del evento:</strong>
+                {{ $evento['id_evento'] }}
+            </p>
 
             <p>
                 <strong>Tipo de evento:</strong>
                 {{ $evento['tipo_evento'] }}
+            </p>
+
+            <!-- datos del evento: clasificacion -->
+            <p>
+                <strong>Clasificación:</strong>
+                <span class="badge bg-secondary">
+                    {{ $evento['clasificacion'] }}
+                </span>
             </p>
 
             <p>
@@ -65,10 +78,18 @@
                 {{ $evento['fecha_hora'] }}
             </p>
 
+            
+            
+
+
+
             <div class="alert alert-info mb-0">
-                Este evento es una simulación.
-                Su almacenamiento y evaluación se
-                implementarán en las siguientes actividades.
+                El evento se ha registrado correctamente
+                en la base de datos.
+
+                Su clasificación se realizará cuando
+                implementemos el evaluador de horarios
+                en CON-05.
             </div>
         </div>
     </div>
