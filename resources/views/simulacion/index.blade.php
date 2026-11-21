@@ -68,9 +68,20 @@
             <!-- datos del evento: clasificacion -->
             <p>
                 <strong>Clasificación:</strong>
-                <span class="badge bg-secondary">
-                    {{ $evento['clasificacion'] }}
-                </span>
+
+                @if ($evento['clasificacion'] === 'AUTORIZADO')
+                    <span class="badge bg-success">
+                        AUTORIZADO
+                    </span>
+                @elseif ($evento['clasificacion'] === 'ANOMALO')
+                    <span class="badge bg-danger">
+                        ANOMALO
+                    </span>
+                @else
+                    <span class="badge bg-secondary">
+                        PENDIENTE
+                    </span>
+                @endif
             </p>
 
             <p>
@@ -79,17 +90,15 @@
             </p>
 
             
-            
-
-
 
             <div class="alert alert-info mb-0">
-                El evento se ha registrado correctamente
-                en la base de datos.
+                 El evento fue registrado y evaluado correctamente.
 
-                Su clasificación se realizará cuando
-                implementemos el evaluador de horarios
-                en CON-05.
+                @if ($evento['clasificacion'] === 'ANOMALO')
+                    La apertura ocurrió fuera del horario permitido.
+                @else
+                    La apertura ocurrió dentro del horario permitido.
+                @endif
             </div>
         </div>
     </div>
