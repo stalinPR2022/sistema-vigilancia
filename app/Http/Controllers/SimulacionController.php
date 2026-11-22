@@ -6,6 +6,8 @@ use App\Models\Puerta;
 use App\Services\EvaluadorHorarios;
 use App\Services\GestorEventos;
 use App\Services\SensorPuertaSimulado;
+use App\Services\GeneradorAlertas;
+use App\Services\ControladorActuadorSimulado;
 
 class SimulacionController extends Controller
 {
@@ -20,7 +22,9 @@ class SimulacionController extends Controller
     public function simular(
         SensorPuertaSimulado $sensor,
         GestorEventos $gestorEventos,
-        EvaluadorHorarios $evaluador
+        EvaluadorHorarios $evaluador,
+        GeneradorAlertas $generadorAlertas,
+        ControladorActuadorSimulado $actuador
     ) {
         $puerta = Puerta::where('nombre', 'Puerta principal')
             ->where('activa', true)
@@ -29,8 +33,16 @@ class SimulacionController extends Controller
         // Generar apertura simulada
         $datos = $sensor->generarApertura($puerta);
 
-        // Registrar y evaluar el evento
-        $evento = $gestorEventos->registrar($datos, $evaluador);
+        // Registrar, evaluar y generar alerta si corresponde
+        $evento = $gestorEventos->registrar(
+            $datos,
+            $evaluador,
+            $generadorAlertas,
+            $actuador
+        );
+
+        // Obtener la alerta asociada, si existe
+        $alerta = $evento->alerta;
 
         return redirect()
             ->route('simulacion.index')
@@ -43,6 +55,9 @@ class SimulacionController extends Controller
                     ->setTimezone('America/El_Salvador')
                     ->format('d/m/Y H:i:s'),
                 'clasificacion' => $evento->clasificacion,
+                'id_alerta' => $alerta?->id_alerta,
+                'mensaje_alerta' => $alerta?->mensaje,
+                'alarma_activada' => $alerta?->alarma_activada ?? false,
             ]);
     }
 }

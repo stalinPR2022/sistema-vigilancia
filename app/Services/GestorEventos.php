@@ -10,16 +10,22 @@ class GestorEventos
 {
     public function registrar(
         array $datos,
-        EvaluadorHorarios $evaluador
+        EvaluadorHorarios $evaluador,
+        GeneradorAlertas $generadorAlertas,
+        ControladorActuadorSimulado $actuador
     ): Evento {
-        return DB::transaction(function () use ($datos, $evaluador) {
-
-            // Convertir explícitamente la fecha a UTC
+        return DB::transaction(function () use (
+            $datos,
+            $evaluador,
+            $generadorAlertas,
+            $actuador
+        ) {
+            // 1. Convertir la fecha a UTC
             $fechaUtc = CarbonImmutable::parse(
                 $datos['fecha_hora']
             )->utc()->format('Y-m-d H:i:s');
 
-            // Registrar el evento con fecha UTC
+            // 2. Registrar el evento
             $evento = Evento::create([
                 'id_puerta' => $datos['id_puerta'],
                 'tipo_evento' => $datos['tipo_evento'],
@@ -27,12 +33,17 @@ class GestorEventos
                 'clasificacion' => 'PENDIENTE',
             ]);
 
-            // Evaluar utilizando la hora local de El Salvador
-            $clasificacion = $evaluador->evaluar($evento);
-
-            // Actualizar el evento
-            $evento->clasificacion = $clasificacion;
+            // 3. Evaluar el horario
+            $evento->clasificacion = $evaluador->evaluar($evento);
             $evento->save();
+
+            // 4. Generar alerta si es anomalo
+            $alerta = $generadorAlertas->generar($evento);
+
+            // 5. Activar la alarma simulada
+            if ($alerta !== null) {
+                $actuador->activar($alerta);
+            }
 
             return $evento;
         });

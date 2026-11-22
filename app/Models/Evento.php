@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Evento extends Model
 {
@@ -27,6 +28,7 @@ class Evento extends Model
         ];
     }
 
+    //Funcion de la puerta
     public function puerta(): BelongsTo
     {
         return $this->belongsTo(
@@ -35,4 +37,15 @@ class Evento extends Model
             'id_puerta'
         );
     }
+
+    //funciona de la alerta
+    public function alerta(): HasOne
+    {
+        return $this->hasOne(
+            Alerta::class,
+            'id_evento',
+            'id_evento'
+        );
+    }
+
 }

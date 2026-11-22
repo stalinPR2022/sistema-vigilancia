@@ -91,15 +91,49 @@
 
             
 
-            <div class="alert alert-info mb-0">
-                 El evento fue registrado y evaluado correctamente.
+            
+                
+            @if ($evento['clasificacion'] === 'ANOMALO')
 
-                @if ($evento['clasificacion'] === 'ANOMALO')
-                    La apertura ocurrió fuera del horario permitido.
-                @else
-                    La apertura ocurrió dentro del horario permitido.
-                @endif
-            </div>
+                <div class="alert alert-danger mt-3">
+
+                    <h5 class="alert-heading">
+                        ¡Alerta de seguridad!
+                    </h5>
+
+                    <p>
+                        {{ $evento['mensaje_alerta'] }}
+                    </p>
+
+                    <p>
+                        <strong>ID de alerta:</strong>
+                        {{ $evento['id_alerta'] }}
+                    </p>
+
+                    <p class="mb-0">
+                        <strong>Alarma simulada:</strong>
+
+                        @if ($evento['alarma_activada'])
+                            <span class="badge bg-danger">
+                                ACTIVADA
+                            </span>
+                        @else
+                            <span class="badge bg-secondary">
+                                NO ACTIVADA                                </span>
+                        @endif
+                    </p>
+
+                </div>
+
+            @else
+
+                <div class="alert alert-success mt-3">
+                    Apertura autorizada.
+                    No se generó ninguna alerta de seguridad.
+                </div>
+            @endif
+
+            
         </div>
     </div>
 @endif
