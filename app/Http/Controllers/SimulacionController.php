@@ -8,6 +8,8 @@ use App\Services\GestorEventos;
 use App\Services\SensorPuertaSimulado;
 use App\Services\GeneradorAlertas;
 use App\Services\ControladorActuadorSimulado;
+use App\Services\GestorNotificaciones;
+use App\Services\NotificadorSMTP;
 
 class SimulacionController extends Controller
 {
@@ -19,13 +21,15 @@ class SimulacionController extends Controller
         return view('simulacion.index', compact('puerta'));
     }
 
-    public function simular(
-        SensorPuertaSimulado $sensor,
-        GestorEventos $gestorEventos,
-        EvaluadorHorarios $evaluador,
-        GeneradorAlertas $generadorAlertas,
-        ControladorActuadorSimulado $actuador
-    ) {
+        public function simular(
+            SensorPuertaSimulado $sensor,
+            GestorEventos $gestorEventos,
+            EvaluadorHorarios $evaluador,
+            GeneradorAlertas $generadorAlertas,
+            ControladorActuadorSimulado $actuador,
+            GestorNotificaciones $gestorNotificaciones,
+            NotificadorSMTP $notificadorSMTP
+        ){
         $puerta = Puerta::where('nombre', 'Puerta principal')
             ->where('activa', true)
             ->firstOrFail();
@@ -44,6 +48,16 @@ class SimulacionController extends Controller
         // Obtener la alerta asociada, si existe
         $alerta = $evento->alerta;
 
+        // Enviar notificacion solo si existe una alerta
+        $notificacion = null;
+
+        if ($alerta !== null) {
+            $notificacion = $gestorNotificaciones->notificarPorSMTP(
+                $alerta,
+                $notificadorSMTP
+            );
+        }
+
         return redirect()
             ->route('simulacion.index')
             ->with('evento', [
@@ -58,6 +72,9 @@ class SimulacionController extends Controller
                 'id_alerta' => $alerta?->id_alerta,
                 'mensaje_alerta' => $alerta?->mensaje,
                 'alarma_activada' => $alerta?->alarma_activada ?? false,
+                'estado_notificacion' => $notificacion?->estado,
+                'id_notificacion' => $notificacion?->id_notificacion,
+                'canal_notificacion' => $notificacion?->canal,
             ]);
     }
 }

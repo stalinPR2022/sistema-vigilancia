@@ -88,9 +88,6 @@
                 <strong>Fecha y hora:</strong>
                 {{ $evento['fecha_hora'] }}
             </p>
-
-            
-
             
                 
             @if ($evento['clasificacion'] === 'ANOMALO')
@@ -119,7 +116,8 @@
                             </span>
                         @else
                             <span class="badge bg-secondary">
-                                NO ACTIVADA                                </span>
+                                NO ACTIVADA
+                            </span>
                         @endif
                     </p>
 
@@ -132,6 +130,51 @@
                     No se generó ninguna alerta de seguridad.
                 </div>
             @endif
+
+            
+            @if (!empty($evento['estado_notificacion']))
+
+                <div class="card mt-3">
+
+                    <div class="card-header">
+                        <strong>Notificación por correo electrónico</strong>
+                    </div>
+
+                    <div class="card-body">
+
+                        <p>
+                            <strong>Canal:</strong>
+                            {{ $evento['canal_notificacion'] }}
+                        </p>
+
+                        <p>
+                            <strong>ID de notificación:</strong>
+                            {{ $evento['id_notificacion'] }}
+                        </p>
+
+                        <p class="mb-0">
+                            <strong>Estado:</strong>
+
+                            @if ($evento['estado_notificacion'] === 'ENVIADO')
+                                <span class="badge bg-success">
+                                    ENVIADO
+                                </span>
+                            @elseif ($evento['estado_notificacion'] === 'FALLIDO')
+                                <span class="badge bg-danger">
+                                    FALLIDO
+                                </span>
+                            @else
+                                <span class="badge bg-secondary">
+                                    PENDIENTE
+                                </span>
+                            @endif
+                        </p>
+
+                    </div>
+                </div>
+
+            @endif
+
 
             
         </div>

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Alerta extends Model
 {
@@ -34,6 +35,16 @@ class Alerta extends Model
             Evento::class,
             'id_evento',
             'id_evento'
+        );
+    }
+
+    //Para poder hacer las notificaciones
+    public function notificaciones(): HasMany
+    {
+        return $this->hasMany(
+            Notificacion::class,
+            'id_alerta',
+            'id_alerta'
         );
     }
 }
