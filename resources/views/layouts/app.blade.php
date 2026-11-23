@@ -34,6 +34,13 @@
                 href="{{ route('simulacion.index') }}">
                     Simulación
                 </a>
+
+
+                <a class="nav-link"
+                href="{{ route('historial.index') }}">
+                    Historial
+                </a>
+
             </div>
 
         </div>
