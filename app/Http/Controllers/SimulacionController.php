@@ -10,6 +10,7 @@ use App\Services\GeneradorAlertas;
 use App\Services\ControladorActuadorSimulado;
 use App\Services\GestorNotificaciones;
 use App\Services\NotificadorSMTP;
+use App\Services\NotificadorTelegram;
 
 class SimulacionController extends Controller
 {
@@ -28,7 +29,8 @@ class SimulacionController extends Controller
             GeneradorAlertas $generadorAlertas,
             ControladorActuadorSimulado $actuador,
             GestorNotificaciones $gestorNotificaciones,
-            NotificadorSMTP $notificadorSMTP
+            NotificadorSMTP $notificadorSMTP,
+            NotificadorTelegram $notificadorTelegram
         ){
         $puerta = Puerta::where('nombre', 'Puerta principal')
             ->where('activa', true)
@@ -47,16 +49,27 @@ class SimulacionController extends Controller
 
         // Obtener la alerta asociada, si existe
         $alerta = $evento->alerta;
-
-        // Enviar notificacion solo si existe una alerta
+       
+        // Resultados de ambos canales
         $notificacion = null;
+        $notificacionTelegram = null;
 
         if ($alerta !== null) {
+
+            // Canal A: correo electronico
             $notificacion = $gestorNotificaciones->notificarPorSMTP(
                 $alerta,
                 $notificadorSMTP
             );
+
+            // Canal B: Telegram
+            $notificacionTelegram =
+                $gestorNotificaciones->notificarPorTelegram(
+                    $alerta,
+                    $notificadorTelegram
+                );
         }
+
 
         return redirect()
             ->route('simulacion.index')
@@ -75,6 +88,10 @@ class SimulacionController extends Controller
                 'estado_notificacion' => $notificacion?->estado,
                 'id_notificacion' => $notificacion?->id_notificacion,
                 'canal_notificacion' => $notificacion?->canal,
+                // Resultado del canal Telegram
+                'estado_telegram' => $notificacionTelegram?->estado,
+                'id_notificacion_telegram' => $notificacionTelegram?->id_notificacion,
+                'canal_telegram' => $notificacionTelegram?->canal,
             ]);
     }
 }
